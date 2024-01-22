@@ -1,0 +1,148 @@
+create database OrderPlease;
+
+use  OrderPlease;
+
+CREATE TABLE shop (
+    shop_id INT PRIMARY KEY COMMENT 'Unique identifier for each shop',
+    shop_name VARCHAR(255) NOT NULL COMMENT 'Name of the shop',
+    owner_name VARCHAR(255) NOT NULL COMMENT 'Name of the shop owner',
+    shop_status VARCHAR(50) COMMENT 'Status of the shop (e.g., open, closed)',
+    temporary_details VARCHAR(255) COMMENT 'Temporary details or notes about the shop',
+    shop_address_id INT COMMENT 'Foreign key referencing the shop_address table',
+    description TEXT COMMENT 'Description or additional information about the shop',
+    verified_status BOOLEAN DEFAULT false COMMENT 'Verification status of the shop',
+    FOREIGN KEY (shop_address_id) REFERENCES address(address_id)
+);
+
+
+
+CREATE TABLE address (
+    address_id INT PRIMARY KEY COMMENT 'Unique identifier for each address',
+    owner_type VARCHAR(20) NOT NULL COMMENT 'Type of owner (e.g., customer or shop owner)',
+    person_id INT COMMENT 'Foreign key referencing the person table (if applicable)',
+    address VARCHAR(255) NOT NULL COMMENT 'Full address details',
+    district VARCHAR(50) COMMENT 'District or locality',
+    pincode VARCHAR(15) COMMENT 'Postal code or PIN code',
+    city VARCHAR(50) NOT NULL COMMENT 'City name',
+    state VARCHAR(50) NOT NULL COMMENT 'State name',
+    landmark VARCHAR(100) COMMENT 'Landmark or notable location'
+);
+
+CREATE TABLE pincode (
+    pincode_id INT PRIMARY KEY COMMENT 'Unique identifier for each pincode',
+    country VARCHAR(50) NOT NULL COMMENT 'Country name',
+    state VARCHAR(50) NOT NULL COMMENT 'State name',
+    district VARCHAR(50) COMMENT 'District or locality',
+    city VARCHAR(50) NOT NULL COMMENT 'City name',
+    pincode VARCHAR(15) NOT NULL COMMENT 'Postal code or PIN code'
+);
+
+
+
+
+
+
+
+
+CREATE TABLE products (
+    product_id INT PRIMARY KEY COMMENT 'Unique identifier for each product',
+    shop_id INT COMMENT 'Foreign key referencing the shop table',
+    product_name VARCHAR(255) NOT NULL COMMENT 'Name of the product',
+    product_cost DECIMAL(10, 2) NOT NULL COMMENT 'Cost of the product',
+    product_weight DECIMAL(8, 2) COMMENT 'Weight of the product',
+    product_type VARCHAR(50) COMMENT 'Type or category of the product'
+);
+
+
+
+CREATE TABLE customer (
+    customer_id INT PRIMARY KEY COMMENT 'Unique identifier for each customer',
+    address_id INT COMMENT 'Foreign key referencing the address table',
+    customer_name VARCHAR(255) NOT NULL COMMENT 'Name of the customer',
+    customer_phone_number VARCHAR(15) COMMENT 'Phone number of the customer',
+    customer_email VARCHAR(255) COMMENT 'Email address of the customer',
+    verified_status BOOLEAN DEFAULT false COMMENT 'Verification status of the customer'
+);
+
+
+CREATE TABLE orders (
+    order_id INT PRIMARY KEY COMMENT 'Unique identifier for each order',
+    shop_id INT COMMENT 'Foreign key referencing the shop table',
+    customer_id INT COMMENT 'Foreign key referencing the customer table',
+    order_cost DECIMAL(10, 2) NOT NULL COMMENT 'Cost of the order',
+    order_delivery_datetime DATETIME COMMENT 'Expected delivery date and time',
+    ordered_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Time when the order was placed',
+    product_id INT COMMENT 'Foreign key referencing the products table',
+    order_status VARCHAR(50) COMMENT 'Status of the order (e.g., processing, shipped, delivered)',
+    order_otp INT COMMENT 'One-time password associated with the order'
+);
+
+
+
+
+
+
+
+
+
+CREATE TABLE orders_archive (
+    archived_order_id INT PRIMARY KEY COMMENT 'Unique identifier for each archived order',
+    shop_id INT COMMENT 'Foreign key referencing the shop table',
+    customer_id INT COMMENT 'Foreign key referencing the customer table',
+    order_cost DECIMAL(10, 2) NOT NULL COMMENT 'Cost of the archived order',
+    order_delivery_datetime DATETIME COMMENT 'Expected delivery date and time for the archived order',
+    ordered_time DATETIME COMMENT 'Time when the archived order was placed',
+    product_id INT COMMENT 'Foreign key referencing the products table for the archived order',
+    order_status VARCHAR(50) COMMENT 'Status of the archived order (e.g., processing, shipped, delivered)',
+    order_otp INT COMMENT 'One-time password associated with the archived order',
+    archive_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Timestamp indicating when the order was archived'
+);
+
+CREATE TABLE orderplease.product_images (
+    image_id INT PRIMARY KEY COMMENT 'Unique identifier for each image',
+    product_id INT COMMENT 'Foreign key referencing the products table',
+    image_url VARCHAR(255) NOT NULL COMMENT 'URL or path to the original high-resolution image stored in cloud storage',
+    thumbnail_url VARCHAR(255) NOT NULL COMMENT 'URL or path to a thumbnail version of the image for faster loading',
+    description TEXT COMMENT 'Additional information or caption for the image',
+    alt_text VARCHAR(255) COMMENT 'Alt text for accessibility purposes',
+    uploaded_by_user_id INT COMMENT 'Foreign key referencing the users table to track who uploaded the image',
+    upload_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Timestamp indicating when the image was uploaded',
+    is_primary BOOLEAN DEFAULT false COMMENT 'Indicates whether the image is the primary image for the associated product',
+    FOREIGN KEY (product_id) REFERENCES products(product_id),
+    FOREIGN KEY (uploaded_by_user_id) REFERENCES shop(shop_id)
+);
+
+
+
+
+
+
+
+-- Add new columns to the orderplease.products table
+ALTER TABLE orderplease.products
+ADD shop_name varchar(15),
+ADD food_ratings int,
+ADD offer_details int,
+ADD food_variety varchar(10),
+ADD availability boolean;
+
+
+select * from orderplease.products;
+
+
+ALTER TABLE orderplease.products
+MODIFY COLUMN product_id int  auto_increment;
+
+
+select * from orderplease.products;
+
+
+delete table orderplease.products;
+
+drop table orderplease.product_images;
+
+
+
+desc orderplease.products;
+
+
